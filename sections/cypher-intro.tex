@@ -1,0 +1,140 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Introduzione alla Crittografia}
+La crittografia è il "building-block" fondamentale per garantire in forma "forte" le proprietà di sicurezza come autenticazione, confidenzialità, integrità e non ripudio.
+
+\subsection{Crittologia: Definizioni}
+La \textbf{Crittologia} è il filone di ricerca che si occupa della segretezza delle comunicazioni. Si divide in tre branche:
+\begin{itemize}
+    \item \textbf{Crittografia}: lo studio dei metodi matematici (algoritmi) per trasformare i dati in modo da renderli incomprensibili a chi non è autorizzato.
+    \item \textbf{Protocolli crittografici}: i meccanismi pratici che usano gli algoritmi crittografici per raggiungere un obiettivo (es. autenticazione).
+    \item \textbf{Crittanalisi}: lo studio dei meccanismi per "rompere" (circonvenire) i metodi e i protocolli crittografici.
+\end{itemize}
+
+\subsection{Terminologia: Gli Attori}
+Nei protocolli crittografici, si usano nomi convenzionali per identificare i partecipanti:
+\begin{itemize}
+    \item \textbf{Alice} e \textbf{Bob}: i due partecipanti legittimi che vogliono comunicare in modo sicuro.
+    \item \textbf{Eve} (Eavesdropper): un'intrusa \textbf{passiva}. Si limita ad ascoltare il canale di comunicazione.
+    \item \textbf{Trudy} (Intruder): un'intrusa \textbf{attiva}. Può intercettare, modificare, eliminare o creare nuovi messaggi.
+\end{itemize}
+
+% TODO: Inserire immagine [Diagramma attori: Alice, Bob, Eve (passiva), Trudy (attiva)]
+% Esempio: Alice e Bob comunicano, Eve ascolta, Trudy intercetta e modifica.
+
+\subsection{Terminologia: Notazione e Operatori}
+\begin{description}
+    \item[$m$ (plaintext)] È il messaggio in chiaro, appartenente allo spazio dei messaggi $M$.
+    \item[$c$ (ciphertext)] È il messaggio criptato, appartenente allo spazio $C$.
+    \item[$k$ (key)] È la chiave, appartenente allo spazio delle chiavi $K$.
+\end{description}
+Nelle reti moderne, si usano quasi esclusivamente alfabeti binari (stringhe di 0 e 1). I dati sono spesso rappresentati in \textbf{esadecimale (hex)}.
+
+L'operatore fondamentale è lo \textbf{XOR} (scritto come $\oplus$), che è una somma binaria a 1-bit \emph{senza riporto}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c|cc}
+\textbf{$\oplus$} & \textbf{0} & \textbf{1} \\
+\midrule
+\textbf{0} & 0 & 1 \\
+\textbf{1} & 1 & 0 \\
+\end{tabular}
+\caption{Tavola di verità dell'operatore XOR.}
+\end{table}
+
+\section{Schema Crittografico Generale}
+Un sistema crittografico è definito da due funzioni:
+\begin{itemize}
+    \item \textbf{Cifratura}: $E_{k1}(m) = c$ (dove $k1$ è la chiave di cifratura).
+    \item \textbf{Decifratura}: $D_{k2}(c) = m$ (dove $k2$ è la chiave di decifratura).
+\end{itemize}
+La funzione di decifratura $D_{k2}$ deve essere l'inversa di $E_{k1}$.
+
+% TODO: Inserire immagine [Schema crittografico generico]
+% Esempio: m -> [E, k1] -> c -> (canale insicuro) -> c -> [D, k2] -> m
+
+\subsection{Classi di Algoritmi Crittografici}
+
+\subsubsection{Block Cipher (Cifrario a Blocchi)}
+\begin{itemize}
+    \item L'algoritmo opera su blocchi di dati di dimensione fissa $b$ (es. 64 o 128 bit).
+    \item La funzione $E_{k1}$ è \textbf{deterministica}: lo stesso blocco di plaintext $m_i$, se cifrato con la stessa chiave $k1$, produce \textbf{sempre} lo stesso blocco di ciphertext $c_i$.
+    \item \textbf{Problema:} Se un blocco di plaintext si ripete nella comunicazione ($m_i = m_j$), anche il blocco di ciphertext si ripeterà ($c_i = c_j$). Questo fa trapelare informazioni (pattern) all'attaccante.
+\end{itemize}
+
+% TODO: Inserire immagine [Diagramma Block Cipher]
+% Esempio: Messaggio lungo diviso in blocchi m1, m2, m3. Ogni mi -> E(k) -> ci.
+
+\subsubsection{Stream Cipher (Cifrario a Flusso)}
+\begin{itemize}
+    \item Opera su unità di dati molto piccole (es. 1-8 bit).
+    \item Mantiene uno \textbf{stato interno} ($Stato_i$) che viene aggiornato continuamente.
+    \item La funzione di cifratura dipende anche da questo stato: $E_{k1}(m_i, Stato_i) = c_i$.
+    \item \textbf{Vantaggio:} Anche se $m_i = m_j$, lo stato interno sarà diverso, quindi $c_i \neq c_j$. Questo nasconde i pattern statistici del plaintext.
+    \item Sono generalmente più veloci e richiedono meno memoria dei block cipher.
+\end{itemize}
+
+% TODO: Inserire immagine [Diagramma Stream Cipher]
+% Esempio: Messaggio m1, m2, m3. m_i e Stato_i -> E(k) -> c_i. Lo stato si aggiorna.
+
+\section{Crittanalisi e Sicurezza}
+
+\subsection{Ipotesi di Kerckhoffs}
+Questo è un principio fondamentale della crittografia moderna: \textbf{la sicurezza di un sistema crittografico deve risiedere esclusivamente nella segretezza della chiave ($k$), non nella segretezza dell'algoritmo ($E, D$)}.
+Si deve sempre assumere che l'attaccante (Trudy) conosca perfettamente l'algoritmo che stiamo usando.
+
+% TODO: Inserire immagine [Diagramma Ipotesi di Kerckhoffs]
+% Esempio: Trudy che vede m, c, E, D, ma non k.
+
+\subsection{Penetrabilità e Tipi di Attacco}
+Un algoritmo è \textbf{penetrabile} (breakable) se un crittanalista può recuperare $m$ da $c$ (o peggio, $k$) in un tempo ragionevole. L'obiettivo dei progettisti è fare in modo che l'attacco più veloce sia la \textbf{ricerca esaustiva} (brute-force) di tutte le possibili chiavi.
+
+Gli attacchi di crittanalisi si classificano in base all'informazione disponibile all'attaccante:
+\begin{description}
+    \item[Ciphertext-only] L'attaccante possiede solo messaggi cifrati ($c$). È l'attacco più difficile.
+    \item[Known plaintext] L'attaccante possiede alcune coppie $(m, c)$ di messaggi in chiaro e cifrati corrispondenti. L'obiettivo è trovare $k$.
+    \item[Chosen plaintext] L'attaccante può scegliere un $m$ arbitrario e ottenere dall'oracolo (il sistema) il $c$ corrispondente. Un buon algoritmo deve resistere anche a questo scenario.
+\end{description}
+
+% TODO: Inserire immagine [Diagrammi tipi di attacco]
+% Esempio: 3 box: 1. Trudy ha solo {c1, c2, ...}. 2. Trudy ha { (m1,c1), (m2,c2) }. 3. Trudy sceglie m_x -> [Oracolo E(k)] -> c_x.
+
+\subsection{Segretezza Perfetta (Shannon)}
+Un algoritmo offre \textbf{segretezza perfetta} se il ciphertext $c$ e il plaintext $m$ sono \textbf{statisticamente indipendenti}.
+\begin{itemize}
+    \item In pratica: osservare $c$ non dà \textbf{alcuna informazione} in più su $m$.
+    \item \textbf{Condizione di Shannon:} La chiave deve essere lunga almeno quanto il messaggio ($H(k) \ge H(m)$).
+\end{itemize}
+
+\subsubsection{One-Time-Pad (OTP)}
+È l'unico algoritmo noto a garantire segretezza perfetta.
+\begin{itemize}
+    \item \textbf{Algoritmo:} Cifratura $c = m \oplus k$ e Decifratura $m = c \oplus k$.
+    \item \textbf{Ipotesi fondamentali:} La chiave $k$ deve essere:
+    \begin{enumerate}
+        \item Lunga \textbf{esattamente} quanto il messaggio $m$.
+        \item Generata in modo \textbf{perfettamente casuale}.
+        \item Utilizzata \textbf{una sola volta} (da cui il nome "one-time").
+    \end{enumerate}
+    \item \textbf{Problema:} La generazione e la distribuzione sicura di una chiave così lunga (e usarla una sola volta) è estremamente difficile nella pratica.
+\end{itemize}
+
+% TODO: Inserire immagine [Diagramma One-Time-Pad (OTP)]
+% Esempio: m -> XOR con k -> c. Poi c -> XOR con k -> m. Mostrare k generata casualmente.
+
+\section{Tipologie Base di Algoritmi Crittografici}
+Gli algoritmi crittografici si dividono in tre famiglie principali:
+\begin{description}
+    \item[Simmetrici (a chiave privata)] Si usa una singola chiave segreta condivisa: $k = k1 = k2$.
+    \item[Asimmetrici (a chiave pubblica)] Si usa una coppia di chiavi (una pubblica e una privata): $k1 \ne k2$.
+    \item[Algoritmi di Hash] Non usano chiavi per la cifratura, ma producono un "fingerprint" dei dati.
+\end{description}
+
+% TODO: Inserire immagine [Diagramma tipi di crittografia]
+% Esempio: 3 box: 1. Simmetrica (k_segreta -> E, k_segreta -> D). 2. Asimmetrica (k_pub -> E, k_priv -> D). 3. Hash (m -> HASH -> h).
+
+
+\end{document}

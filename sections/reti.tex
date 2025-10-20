@@ -1,0 +1,111 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Modelli a Strati e Architetture di Rete}
+
+\subsection{Comunicazione Logica vs. Fisica}
+Quando due sistemi comunicano (es. una webcam e uno smartphone), si possono identificare due tipi di comunicazione:
+\begin{itemize}
+    \item \textbf{Comunicazione Logica:} La comunicazione "diretta" percepita tra i due dispositivi finali (la webcam invia immagini allo smartphone).
+    \item \textbf{Comunicazione Fisica:} Il percorso reale che i dati compiono attraverso la rete, saltando da un nodo intermedio (router, switch) all'altro.
+\end{itemize}
+
+\subsection{Pacchettizzazione e Indirizzamento}
+Per funzionare, la comunicazione si basa su due problemi fondamentali:
+\begin{enumerate}
+    \item \textbf{Pacchettizzazione:} La sequenza di dati prodotta da un'applicazione (es. un video) è troppo grande per essere inviata in un blocco unico. Viene "spezzettata" in blocchetti più piccoli, detti \textbf{pacchetti}.
+    \item \textbf{Indirizzamento:} Ogni pacchetto deve contenere le informazioni per raggiungere sia il \emph{nodo} (computer) corretto, sia l'applicazione corretta all'interno di quel nodo.
+\end{enumerate}
+
+Questa divisione in problemi viene gestita da un \textbf{modello a strati} (o stack protocollare), dove ogni livello risolve un sotto-problema, aggiungendo le proprie informazioni di controllo (header).
+
+\subsection{Il Modello a Strati (Stack Protocollare)}
+L'approccio "divide et impera" della rete. I due modelli principali sono OSI (astratto) e TCP/IP (in uso).
+\begin{itemize}
+    \item \textbf{Comunicazione Fisica (Verticale):} Su un singolo nodo, ogni livello interagisce solo con il livello immediatamente superiore o inferiore.
+    \item \textbf{Comunicazione Logica (Orizzontale):} Ogni livello (es. L4) su un nodo "parla" logicamente con il suo livello omologo (L4) sul nodo di destinazione. L'insieme di regole di questo dialogo si chiama \textbf{protocollo}.
+    \item \textbf{Incapsulamento:} Scendendo nello stack (dall'Applicazione al Fisico), ogni livello "imbusta" i dati ricevuti dal livello superiore aggiungendo il proprio \textbf{header}.
+\end{itemize}
+
+\subsection{L'Architettura TCP/IP (Modello a 5 Livelli)}
+Questo è il modello operativo su cui si basa Internet.
+\begin{description}
+    \item[Livello 5: Applicazione] Fornisce servizi all'utente (es. protocolli HTTP per il web, SMTP per l'email).
+    
+    \item[Livello 4: Trasporto] Fornisce un canale di comunicazione \emph{end-to-end} tra le \textbf{applicazioni}.
+    \begin{itemize}
+        \item Identifica le applicazioni tramite \textbf{Porte}.
+        \item Protocolli principali: \textbf{TCP} (affidabile) e \textbf{UDP} (non affidabile).
+        \item Funzioni: Riordino pacchetti, controllo errori, controllo di flusso.
+    \end{itemize}
+    
+    \item[Livello 3: Rete] Gestisce il trasferimento di pacchetti tra \emph{nodi} attraverso la rete (anche tra reti diverse).
+    \begin{itemize}
+        \item Protocollo chiave: \textbf{IP (Internet Protocol)}.
+        \item Identifica i nodi tramite \textbf{Indirizzi IP}.
+        \item Funzione principale: \textbf{Routing (Instradamento)}, ovvero decidere il percorso migliore per i pacchetti.
+    \end{itemize}
+    
+    \item[Livello 2: Data-Link] Gestisce il trasferimento di dati (detti \textbf{trame} o \emph{frames}) tra nodi \emph{adiacenti} (sullo stesso cavo o stessa rete Wi-Fi).
+    \begin{itemize}
+        \item Identifica i dispositivi tramite \textbf{Indirizzi MAC}.
+        \item Funzioni: Framing (delimitazione trame), controllo errori (Checksum/CRC), accesso al mezzo.
+    \end{itemize}
+    
+    \item[Livello 1: Fisico] Gestisce la trasmissione del singolo \textbf{bit} sul mezzo fisico (cavo in rame, fibra ottica, onde radio).
+\end{description}
+
+\section{Approfondimento Livelli Chiave}
+
+\subsection{Livello 2: Data-Link}
+Gestisce la comunicazione tra nodi direttamente connessi.
+\begin{itemize}
+    \item \textbf{Framing:} Crea le "trame" aggiungendo un Header (H) e un Trailer (T) al pacchetto L3. Il trailer contiene tipicamente un \textbf{Checksum (CRC)} per il controllo degli errori.
+    \item \textbf{Affidabilità:} Può implementare meccanismi di riscontro (\textbf{ACK}) e ritrasmissione per correggere gli errori. Serve un \emph{sequence number} per gestire ACK persi e duplicati.
+    \item \textbf{Accesso al Mezzo:} Fondamentale se il mezzo è \emph{condiviso} (es. Wi-Fi).
+    \begin{itemize}
+        \item \textbf{CSMA/CD (Obsoleto):} Usato nelle vecchie Ethernet. Rileva le collisioni e ritrasmette.
+        \item \textbf{CSMA/CA (In uso):} Usato nel \textbf{Wi-Fi (802.11)}. Cerca di \emph{evitare} le collisioni prima di trasmettere.
+    \end{itemize}
+    \item \textbf{Indirizzamento L2:} Avviene tramite \textbf{Indirizzo MAC} (48 bit), un identificativo hardware univoco della scheda di rete (NIC).
+\end{itemize}
+
+\subsection{Livello 3: Rete (IP)}
+Il "collante" di Internet.
+\begin{itemize}
+    \item \textbf{Protocollo IP:} Offre un servizio \textbf{best-effort} (fa del suo meglio) e \textbf{non affidabile}. I pacchetti possono essere persi, duplicati o arrivare fuori ordine. L'affidabilità è compito del Livello 4 (TCP).
+    \item \textbf{Internetworking:} Permette a reti eterogenee (es. Wi-Fi ed Ethernet) di comunicare tra loro.
+    \item \textbf{Router:} È il dispositivo chiave del L3. A differenza di un host, un router non "spacchetta" i dati oltre il L3.
+    \begin{itemize}
+        \item 1. Riceve una trama L2 (es. Ethernet).
+        \item 2. Estrae il pacchetto IP (L3).
+        \item 3. Legge l'indirizzo IP di destinazione.
+        \item 4. Consulta la sua \textbf{tabella di routing} per decidere il "next-hop" (prossimo salto).
+        \item 5. Re-incapsula il pacchetto IP in una \emph{nuova} trama L2 (es. Wi-Fi) e lo invia.
+    \end{itemize}
+    \item \textbf{Header IP:} Contiene l'indirizzo IP sorgente e destinazione (32 bit in IPv4), che \textbf{non cambiano} per tutto il viaggio del pacchetto.
+    \item \textbf{Indirizzi Privati:} Alcuni intervalli IP (es. \texttt{192.168.0.0/16}, \texttt{10.0.0.0/8}) sono riservati per reti locali e non sono instradati su Internet.
+\end{itemize}
+
+\subsection{Livello 4: Trasporto (TCP e UDP)}
+Gestisce la comunicazione \emph{end-to-end} tra le applicazioni.
+\begin{itemize}
+    \item \textbf{Multiplazione (Porte):} Usa i numeri di \textbf{porta} per distinguere a quale applicazione (es. browser, email) su un host sono destinati i dati.
+    \item \textbf{UDP (User Datagram Protocol):}
+    \begin{itemize}
+        \item \emph{Connectionless} e \emph{non affidabile}.
+        \item Non ha conferme, né riordino, né controllo di congestione.
+        \item È molto veloce e leggero. Usato per streaming video, gaming, DNS.
+    \end{itemize}
+    \item \textbf{TCP (Transmission Control Protocol):}
+    \begin{itemize}
+        \item \emph{Connection-oriented} e \emph{affidabile}.
+        \item Stabilisce una connessione (handshake) prima di inviare dati.
+        \item Garantisce che tutti i segmenti arrivino, senza errori e nell'ordine corretto, tramite \textbf{ACK} e \textbf{numeri di sequenza}.
+        \item Implementa controllo di flusso e di congestione. Usato per web (HTTP), email (SMTP), file transfer (FTP).
+    \end{itemize}
+\end{itemize}
+
+
+\end{document}
