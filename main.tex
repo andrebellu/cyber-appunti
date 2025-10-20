@@ -19,56 +19,56 @@
 \section{Introduzione alla Cybersecurity}
 
 \subsection{Perché Cybersecurity? Il Contesto di Industria 4.0}
-Il bisogno di cybersecurity è cresciuto esponenzialmente con l'arrivo dell'**Industria 4.0** (ora "Impresa 4.0"). Questo paradigma si basa su tecnologie abilitanti che interconnettono l'intera filiera produttiva.
+Il bisogno di cybersecurity è cresciuto esponenzialmente con l'arrivo dell'\textbf{Industria 4.0} (ora "Impresa 4.0"). Questo paradigma si basa su tecnologie abilitanti che interconnettono l'intera filiera produttiva.
 \begin{itemize}
-    \item Questa interconnessione (es. feedback dalle vendite alla produzione) crea **molte nuove possibilità per fare danni**.
-    \item L'elemento fondamentale è la necessità di **meccanismi per garantire la sicurezza nelle comunicazioni**.
+    \item Questa interconnessione (es. feedback dalle vendite alla produzione) crea \textbf{molte nuove possibilità per fare danni}.
+    \item L'elemento fondamentale è la necessità di \textbf{meccanismi per garantire la sicurezza nelle comunicazioni}.
 \end{itemize}
 
 \subsection{Esempi di CyberThreats}
 Le minacce informatiche (cyberthreats) dimostrano la necessità di protezione in vari ambiti:
 \begin{itemize}
     \item \textbf{Robot Industriali}:
-    \begin{itemize}
-        \item Attacco tramite smartphone infetto che, una volta nella rete aziendale, si finge il repository per gli aggiornamenti.
-        \item Il robot scarica così codice malevolo.
-        \item \textbf{Problema di fondo:} Rete aziendale per i client non separata dalla rete di produzione.
-        \item \textbf{Danno subdolo:} Modificare il movimento di pochi mm, creando migliaia di pezzi difettosi.
-    \enditemize}
+          \begin{itemize}
+              \item Attacco tramite smartphone infetto che, una volta nella rete aziendale, si finge il repository per gli aggiornamenti.
+              \item Il robot scarica così codice malevolo.
+              \item \textbf{Problema di fondo:} Rete aziendale per i client non separata dalla rete di produzione.
+              \item \textbf{Danno subdolo:} Modificare il movimento di pochi mm, creando migliaia di pezzi difettosi.
+          \end{itemize}
 
     \item \textbf{Stuxnet}:
-    \begin{itemize}
-        \item Virus sviluppato da governi (US contro Iran).
-        \item È entrato nella rete isolata della centrale nucleare di Natanz tramite una **chiavetta USB**.
-        \item \textbf{Obiettivo:} Attaccare i PLC di controllo delle centrifughe (Siemens).
-    \end{itemize}
+          \begin{itemize}
+              \item Virus sviluppato da governi (US contro Iran).
+              \item È entrato nella rete isolata della centrale nucleare di Natanz tramite una \textbf{chiavetta USB}.
+              \item \textbf{Obiettivo:} Attaccare i PLC di controllo delle centrifughe (Siemens).
+          \end{itemize}
 
     \item \textbf{Domino's Pizza}:
-    \begin{itemize}
-        \item L'app per smartphone gestiva tutto il processing, **senza un double-check lato server**.
-        \item Era possibile inviare un ordine alla produzione senza aver pagato.
-        \item \textbf{Lezione:} L'app deve essere un'interfaccia, il processing va fatto sul server.
-    \end{itemize}
+          \begin{itemize}
+              \item L'app per smartphone gestiva tutto il processing, \textbf{senza un double-check lato server}.
+              \item Era possibile inviare un ordine alla produzione senza aver pagato.
+              \item \textbf{Lezione:} L'app deve essere un'interfaccia, il processing va fatto sul server.
+          \end{itemize}
 
     \item \textbf{Chipset Bluetooth Broadcom}:
-    \begin{itemize}
-        \item È stato scoperto un comando di debug via wireless.
-        \item Esempio di fallimento della "Security by Obscurity".
-    \end{itemize}
+          \begin{itemize}
+              \item È stato scoperto un comando di debug via wireless.
+              \item Esempio di fallimento della "Security by Obscurity".
+          \end{itemize}
 
     \item \textbf{WhatsApp (CVE-2019-3568)}:
-    \begin{itemize}
-        \item Vulnerabilità di tipo **Buffer Overflow** durante l'instaurazione di una sessione VoIP.
-        \item Inviando un messaggio "opportuno" (più lungo del buffer), l'attaccante poteva sovrascrivere altre parti di memoria.
-        \item \textbf{Danno:} Installare software simile a Pegasus per spiare l'utente (camera, microfono, ecc.).
-    \end{itemize}
+          \begin{itemize}
+              \item Vulnerabilità di tipo \textbf{Buffer Overflow} durante l'instaurazione di una sessione VoIP.
+              \item Inviando un messaggio "opportuno" (più lungo del buffer), l'attaccante poteva sovrascrivere altre parti di memoria.
+              \item \textbf{Danno:} Installare software simile a Pegasus per spiare l'utente (camera, microfono, ecc.).
+          \end{itemize}
 
     \item \textbf{Virgin Media O2}:
-    \begin{itemize}
-        \item Configurazione errata del software IMS (IP Multimedia Subsystem).
-        \item Informazioni sensibili (Cell ID, IMSI/IMEI) venivano incluse negli **header del protocollo SIP**.
-        \item \textbf{Danno:} Permetteva a un attaccante di mappare la posizione geografica degli utenti.
-    \end{itemize}
+          \begin{itemize}
+              \item Configurazione errata del software IMS (IP Multimedia Subsystem).
+              \item Informazioni sensibili (Cell ID, IMSI/IMEI) venivano incluse negli \textbf{header del protocollo SIP}.
+              \item \textbf{Danno:} Permetteva a un attaccante di mappare la posizione geografica degli utenti.
+          \end{itemize}
 \end{itemize}
 
 \subsection{Il fattore umano e la convergenza delle reti}
@@ -86,14 +86,14 @@ Molti problemi di sicurezza sono legati alla "pigrizia" (*laziness*):
 \begin{itemize}
     \item Una rete a pacchetto è un insieme di nodi connessi da canali, dove l'informazione è divisa in pacchetti.
     \item Internet è un'unione di sottoreti tra loro interconnesse.
-    \item **Concetto Chiave:** Nello schema originale di Internet, i nodi intermedi non offrono **nessun servizio di sicurezza**.
+    \item \textbf{Concetto Chiave:} Nello schema originale di Internet, i nodi intermedi non offrono \textbf{nessun servizio di sicurezza}.
     \item Tutta la sicurezza deve essere gestita \textbf{dai nodi terminali} (principio "end-to-end").
 \end{itemize}
 
 \subsection{Evoluzione e Convergenza delle Reti}
 \begin{itemize}
     \item \textbf{Reti LAN:} Si è passati da reti cablate (switch) a reti wireless (Access Point). Questo introduce il rischio di "ascolto" (*eavesdropping*).
-    \item \textbf{Reti Industriali:} Si è passati da controlli punto-punto (cablaggio complesso) a Bus di campo (Fieldbus) e infine a **sistemi a pacchetto** (es. Profinet, Wi-Fi).
+    \item \textbf{Reti Industriali:} Si è passati da controlli punto-punto (cablaggio complesso) a Bus di campo (Fieldbus) e infine a \textbf{sistemi a pacchetto} (es. Profinet, Wi-Fi).
     \item \textbf{Convergenza:} Oggi, i problemi di sicurezza sono gli stessi ovunque (casa, azienda, produzione) a causa dell'uso delle stesse tecnologie di rete.
 \end{itemize}
 
@@ -113,7 +113,7 @@ Per proteggere le comunicazioni servono "servizi" specifici:
 \begin{itemize}
     \item La crittografia è il "blocco fondamentale" per ottenere meccanismi di sicurezza "forti".
     \item Include sistemi a chiave simmetrica (private key), asimmetrica (public key), Hash e MAC.
-  \item \textbf{Principio di Kerckhoffs:} La sicurezza di un sistema deve dipendere dalla \textbf{segretezza della chiave}, e non dalla segretezza del sistema/algoritmo (come invece si pensava per la macchina Enigma).
+    \item \textbf{Principio di Kerckhoffs:} La sicurezza di un sistema deve dipendere dalla \textbf{segretezza della chiave}, e non dalla segretezza del sistema/algoritmo (come invece si pensava per la macchina Enigma).
 \end{itemize}
 
 \subsection{Tipi di Attacchi}
@@ -127,7 +127,7 @@ Per proteggere le comunicazioni servono "servizi" specifici:
     \item \textbf{La Sicurezza Assoluta Non Esiste:} È sempre \emph{relativa} all'ambito applicativo e al \emph{valore} di ciò che si protegge.
     \item \textbf{Compromesso:} Ogni meccanismo è un compromesso tra costo, complessità e livello di protezione.
     \item \textbf{Sicurezza di Sistema vs. di Rete:} La prima riguarda il singolo nodo (HW, SW, OS), la seconda la comunicazione \emph{tra} i nodi (protocolli).
-    \item \textbf{Normative (EU):} Dal 2022 in Europa è presente la **NIS2** (Network and Information Security 2). Ha l'obiettivo di aumentare il livello di sicurezza in settori critici (energia, sanità, PA, ecc.) imponendo obblighi di gestione del rischio.
+    \item \textbf{Normative (EU):} Dal 2022 in Europa è presente la \textbf{NIS2} (Network and Information Security 2). Ha l'obiettivo di aumentare il livello di sicurezza in settori critici (energia, sanità, PA, ecc.) imponendo obblighi di gestione del rischio.
     \item \textbf{Framework:} Il \textbf{NIST Cybersecurity Framework (CSF)} è un esempio di approccio sistematico per gestire i rischi (e può essere usato per adeguarsi alla NIS2).
 \end{itemize}
 
