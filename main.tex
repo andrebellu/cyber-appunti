@@ -1,20 +1,67 @@
 \documentclass[a4paper,12pt]{article}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[italian]{babel}
-\usepackage{amsmath, amssymb, amsfonts}
-\usepackage{graphicx}
-\usepackage{geometry}
-\geometry{margin=2.5cm}
-\usepackage{hyperref}
-\usepackage{subfiles}
 
-\title{Appunti di Cybersecurity}
-\author{Andrea Bellu}
+\usepackage{amsmath, amssymb, amsfonts}
+
+\usepackage[a4paper, margin=2.5cm, top=2.2cm, bottom=2.5cm]{geometry}
+\setlength{\parskip}{0.6em}    
+\setlength{\parindent}{0pt}    
+\usepackage{changepage}
+\usepackage{subfiles}
+\usepackage{titling}    
+\usepackage{multicol}
+
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{subcaption}        
+\usepackage{float}             
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[
+    colorlinks=true,
+    linkcolor=NavyBlue,
+    urlcolor=Magenta,
+    citecolor=OliveGreen
+]{hyperref}
+
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyhead[L]{\textit{Appunti di Cybersecurity}}
+\fancyhead[R]{\textit{Corso ITID}}
+\fancyfoot[C]{\thepage}
+
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist{itemsep=0.4em, topsep=0.3em} 
+
+\usepackage{lmodern}
+\linespread{1.15}
+
+\title{\vspace{-2em}\textbf{\Huge Appunti di Cybersecurity}\vspace{-0.5em}}
+\author{\Large Andrea Bellu}
 \date{\today}
 
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{\par\end{center}\vspace{0.5em}}
+\preauthor{\begin{center}\large}
+\postauthor{\par\end{center}}
+\predate{\begin{center}\large}
+\postdate{\par\end{center}}
+
 \begin{document}
+
+\noindent
 \maketitle
+
+{\scriptsize Questi appunti sono stati compilati con l’IA (Gemini AI). Possono contenere errori.}
+
+\tableofcontents
+\newpage
 
 \section{Introduzione alla Cybersecurity}
 
@@ -135,4 +182,7 @@ Per proteggere le comunicazioni servono "servizi" specifici:
 
 \subfile{sections/cypher-intro}
 
+\subfile{sections/symm}
+
 \end{document}
+

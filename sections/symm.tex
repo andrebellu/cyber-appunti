@@ -1,0 +1,270 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\subsection{Crittografia Simmetrica: Block Cipher}
+Lo schema generico della crittografia simmetrica (Symmetric block cipher) prevede che due entità (es. Bob e Alice) condividano la stessa chiave $k$. Questa chiave deve essere scambiata tramite un canale di comunicazione sicuro.
+
+\begin{itemize}
+    \item Il mittente (Bob) usa un algoritmo di cifratura $E$ per trasformare un blocco di testo in chiaro $m$ (plaintext) in un blocco cifrato $c$ (ciphertext). L'operazione è $c = E_k(m)$.
+    \item Il blocco cifrato $c$ viene inviato sul canale di comunicazione insicuro.
+    \item Il ricevente (Alice) usa la stessa chiave $k$ e un algoritmo di decifratura $D$ per riottenere il blocco in chiaro. L'operazione è $m = D_k(c)$.
+    \item L'algoritmo di decifratura è l'inverso di quello di cifratura: $D_k = E_k^{-1}$.
+    \item $m$ e $c$ sono stringhe di bit di una lunghezza fissa $b$, mentre $k$ è una stringa di bit di lunghezza $l$.
+    \item Il block cipher $E_k$ definisce una relazione biunivoca (permutazione) tra i $2^b$ possibili valori di $m$ e i $2^b$ possibili valori di $c$, dipendente dalla chiave $k$.
+    \item Se il messaggio è più lungo di $b$ bit, viene spezzato in una serie di blocchi $m_i$.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{block-cypher.png}
+  \caption{block cypher generico}
+  \label{fig:etichetta}
+\end{figure}
+
+
+\subsection{Obiettivi e Tipologie dei Block Cipher}
+Gli obiettivi fondamentali di un block cipher robusto sono:
+\begin{itemize}
+    \item \textbf{Dipendenza totale:} Ogni bit del blocco cifrato $c$ deve dipendere da tutti i bit del messaggio $m$ e da tutti i bit della chiave $k$.
+    \item \textbf{Occultamento statistico:} Non ci deve essere alcuna relazione statistica evidente tra $c$ e $m$ per chi non conosce $k$.
+    \item \textbf{Effetto valanga (Avalanche effect):} La modifica di un singolo bit in $m$ (o in $k$) deve portare a una modifica di ciascun bit di $c$ con probabilità 0.5.
+\end{itemize}
+
+Esistono due classi principali di block cipher:
+\begin{enumerate}
+    \item \textbf{Cifrario a Sostituzione:} Definisce una corrispondenza biunivoca (mappatura) tra l'insieme $M$ dei blocchi in chiaro e se stesso.
+          \begin{itemize}
+              \item La chiave $k$ è un indice che seleziona una delle $(2^b!)$ permutazioni possibili.
+              \item La lunghezza della chiave necessaria, $l \approx b \cdot 2^b$, rende questo approccio impraticabile (es. per $b=64$, $l \approx 2^{70}$ bit).
+              \item Se $m_i$ si ripete, anche $c_i$ si ripete, rendendolo vulnerabile all'analisi statistica.
+          \end{itemize}
+    \item \textbf{Cifrario a Trasposizione:} Effettua una permutazione (uno "shuffle") dei bit all'interno del blocco $m_i$.
+          \begin{itemize}
+              \item Lo spazio delle chiavi è molto più ridotto: $|K| = b!$. Per $b=64$, $l \approx 384$ bit.
+              \item Offre una segretezza ancora minore rispetto alla sostituzione, ma è un blocco costruttivo utile.
+          \end{itemize}
+\end{enumerate}
+
+\subsection{Prodotto di Cifrari: Confusione e Diffusione}
+Per costruire una funzione $E_k$ complessa e sicura, si usano sostituzione e trasposizione come blocchi fondamentali in cascata (prodotto di cifrari).
+\begin{itemize}
+    \item Questo approccio è detto \textbf{confusione e diffusione}.
+    \item \textbf{Confusione (Sostituzione):} Rende complessa la relazione tra $c$, $m$ e $k$.
+    \item \textbf{Diffusione (Trasposizione):} Spalma l'informazione di un bit di $m$ su molti bit di $c$, per ottenere l'effetto valanga.
+    \item Un prototipo di block cipher moderno applica ripetutamente ($t$ volte, detti \emph{round}) uno strato di sostituzione (es. $n$ S-box parallele) e uno strato di trasposizione (P-box).
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{block-cypher-proto.png}
+  \caption{Didascalia}
+  \label{fig:etichetta}
+\end{figure}
+
+\subsection{Data Encryption Standard (DES)}
+\begin{itemize}
+    \item È un cifrario simmetrico a blocchi sviluppato da IBM su commissione della NSA e standardizzato nel 1977.
+    \item Opera su blocchi di $b=64$ bit.
+    \item Utilizza una chiave di $l=56$ bit (sebbene la chiave fornita sia di 64 bit, 8 bit sono di parità e vengono scartati).
+    \item È basato su un \textbf{cifrario di tipo Feistel}, che divide il blocco in due metà (Sinistra L e Destra R) e applica 16 round.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\linewidth]{des.png}
+      \caption{DES schema ad alto livello}
+      \label{fig:etichetta}
+    \end{figure}
+    
+    
+    \item Lo stesso algoritmo (circuito) si usa per cifrare e decifrare, cambiando solo l'ordine di applicazione delle sottochiavi.
+    
+   \begin{figure}[H]
+     \centering
+     \includegraphics[width=\linewidth]{descomparison.png}
+     \caption{DES: Encryption vs Decryption}
+     \label{fig:etichetta}
+   \end{figure}
+    
+    \item \textbf{Analisi:} La chiave a 56 bit ($2^{56}$ iterazioni) è oggi considerata insicura.
+          \begin{itemize}
+              \item Già nel 1977 un attacco a forza bruta costava 20M\$ e richiedeva 12 ore.
+              \item Nel 1993, 3.5 ore per 1M\$.
+              \item Nel 2007 (COPACOBANA), meno di una settimana con 8K\$.
+              \item Nel 2022, con 13 GPU (6000\$), si stima un tempo simile.
+          \end{itemize}
+    \item \textbf{3DES (Triple DES):} Per sopperire alla chiave corta, oggi si usa il 3DES.
+          \begin{itemize}
+              \item Applica DES tre volte con due chiavi (k1, k2): $c = E_{k1}(D_{k2}(E_{k1}(m)))$.
+              \item La chiave effettiva diventa di $l=112$ bit ($2^{112}$ spazio delle chiavi).
+              \item È retrocompatibile con DES (basta porre $k1=k2$).
+          \end{itemize}
+          
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\linewidth]{3DES.png}
+      \caption{Il DES di oggi: 3DES}
+      \label{fig:etichetta}
+    \end{figure}
+    
+\end{itemize}
+
+\subsection{Advanced Encryption Standard (AES)}
+\begin{itemize}
+    \item È il successore di DES, standardizzato nel 2001. Si basa sull'algoritmo \textbf{Rijndael}.
+    \item Dimensione del blocco $b=128$ bit.
+    \item Lunghezza chiave $l$ variabile: 128, 192 o 256 bit (AES-128, AES-192, AES-256).
+    \item A differenza di DES, non è una rete di Feistel. Opera su "stati", ovvero matrici di $4 \times 4$ byte (per AES-128).
+    \item Applica un numero di round che dipende dalla lunghezza della chiave (es. 9 round principali per AES-128).
+    \item Ogni round è composto da 4 operazioni:
+          \begin{enumerate}
+              \item \textbf{SubBytes:} Sostituzione non lineare di ogni byte usando una S-box.
+              \item \textbf{ShiftRows:} Rotazione (shift) delle righe dello stato.
+              \item \textbf{MixColumns:} Moltiplicazione di ogni colonna per una matrice (diffusione). (Assente nel round finale).
+              \item \textbf{AddRoundKey:} XOR tra lo stato e la sottochiave del round.
+          \end{enumerate}
+          
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\linewidth]{round-aes.png}
+      \caption{AES: operazioni e round}
+      \label{fig:etichetta}
+    \end{figure}
+    
+    \item \textbf{Sicurezza:} Non si conoscono attacchi crittanalitici pratici più efficienti della forza bruta. La NSA lo approva per dati \emph{SECRET} (128 bit) e \emph{TOP-SECRET} (256 bit).
+    \item È molto più veloce di DES/3DES, specialmente in SW.
+\end{itemize}
+
+\subsection{Stream Cipher}
+\begin{itemize}
+    \item \textbf{Block Cipher (BC):} Processano blocchi "larghi" ($b \ge 64$ bit) e sono \emph{stateless} (la stessa $E_k$ è usata per tutti i blocchi).
+    \item \textbf{Stream Cipher (SC):} Processano blocchi "piccoli" ($1 \le b \le 8$ bit) e sono \emph{stateful} (la funzione di cifratura varia man mano).
+    \item \textbf{One-Time-Pad:} È lo stream cipher perfetto, ma richiede una chiave (keystream) lunga quanto il messaggio e perfettamente casuale.
+    \item Gli SC pratici generano un \emph{keystream pseudocasuale} $z_i$ a partire da una chiave corta $k$ e cifrano tramite XOR: $c_i = m_i \oplus z_i$.
+    \item \textbf{Synchronous SC:} Il keystream $z_i$ è generato indipendentemente da $m_i$ e $c_i$. Sorgente e destinazione devono essere perfettamente sincronizzate. Se si perde un blocco, la decifrazione dei successivi è errata. (Es. RC4, Chacha-20).
+    
+   \begin{figure}[H]
+     \centering
+     \includegraphics[width=\linewidth]{ssc.png}
+     \caption{Schema Synchronous Stream Cipher}
+     \label{fig:etichetta}
+   \end{figure}
+    
+    \item \textbf{Self-synchronizing SC:} Il keystream $z_i$ dipende dalla chiave $k$ e dai $t$ blocchi di \emph{ciphertext} precedenti: $z_i = g(c_{i-1}, ..., c_{i-t}, K)$. Si auto-risincronizza dopo un errore: la perdita di un $c_i$ corrompe solo un numero limitato di $m_j$ successivi.
+    
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{sssc.png}
+        \caption{Schema Self-synchronizing Stram Cipher}
+        \label{fig:etichetta}
+      \end{figure}
+      
+\end{itemize}
+
+\subsection{Modi d'uso dei Block Cipher}
+Sono meccanismi che permettono di usare i block cipher (stateless) per cifrare messaggi più lunghi della dimensione del blocco $b$, trasformandoli di fatto in stream cipher.
+
+\begin{itemize}
+    \item \textbf{Electronic Code Book (ECB):}
+          \begin{itemize}
+              \item È il modo più semplice: ogni blocco $m_i$ è cifrato indipendentemente: $c_i = E_k(m_i)$.
+              \item \textbf{Svantaggio:} Blocchi $m_i$ identici producono blocchi $c_i$ identici. Questo non nasconde le relazioni statistiche del plaintext ed è vulnerabile ad attacchi.
+              \item \textbf{Non va mai usato}.
+          \end{itemize}
+          
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\linewidth]{ECB.png}
+      \caption{Electronic Code Book Mode}
+      \label{fig:etichetta}
+    \end{figure}
+     
+    \item \textbf{Cipher Block Chaining (CBC):}
+          \begin{itemize}
+              \item Introduce dipendenza tra i blocchi. Ogni $m_i$ è messo in XOR con il $c_{i-1}$ \emph{precedente} prima di essere cifrato: $c_i = E_k(m_i \oplus c_{i-1})$.
+              \item Per il primo blocco, si usa un \textbf{Initialization Vector (IV)} non segreto (ma casuale): $c_0 = IV$.
+              \item \textbf{Vantaggio:} Stessi $m_i$ producono $c_i$ diversi. Resiste all'analisi della frequenza.
+              \item \textbf{Svantaggio:} Un errore su $c_i$ corrompe la decifrazione di $m_i$ e $m_{i+1}$.
+          \end{itemize}
+          
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\linewidth]{CBC.png}
+      \caption{Cipher Block Chaining Mode}
+      \label{fig:etichetta}
+    \end{figure}
+          
+    \item \textbf{Counter Mode (CTR):}
+          \begin{itemize}
+              \item Trasforma un block cipher in uno stream cipher di tipo \emph{synchronous}.
+              \item Genera un keystream $o_i$ cifrando un contatore (incrementato per ogni blocco): $o_i = E_k(IV + i - 1)$.
+              \item Cifra tramite XOR: $c_i = m_i \oplus o_i$.
+              \item \textbf{Vantaggio:} È possibile calcolare il keystream $o_j$ e decifrare $m_j$ senza dover calcolare i $j-1$ blocchi precedenti. Permette il \textbf{random access} (utile per dischi, file, ecc.).
+          \end{itemize}
+          
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{CTR.png}
+            \caption{Schema modo Counter Mode}
+            \label{fig:etichetta}
+          \end{figure}
+\end{itemize}
+
+\label{sec:funzioni-hash}
+
+\subsection{Definizioni e Tipologie}
+\begin{itemize}
+    \item Una \textbf{funzione di hash} (o \emph{message digest function}) $h$ è una funzione che mappa una stringa binaria $m$ di lunghezza arbitraria in una stringa binaria $d$ (l'hash) di lunghezza $n$ fissa.
+    \item L'hash $d=h(m)$ è una "impronta digitale" (fingerprint) o rappresentazione compatta di $m$.
+    \item \textbf{MDC (Modification Detection Code):}
+          \begin{itemize}
+              \item È una funzione di hash \emph{senza chiave}: $d = h(m)$.
+              \item \textbf{Obiettivo:} Garantire l'integrità di $m$. Se l'hash $d$ (ottenuto separatamente, es. da un sito web) è integro, si può verificare che $m$ non sia stato modificato.
+          \end{itemize}
+    \item \textbf{MAC (Message Authentication Code):}
+          \begin{itemize}
+              \item È una funzione di hash \emph{con chiave} (segreta): $d = h_k(m)$.
+              \item \textbf{Obiettivo:} Garantire sia l'integrità (nessuno ha modificato $m$) sia l'autenticazione (solo chi conosce $k$ può aver generato $d$).
+          \end{itemize}
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{MDC.png}
+  \caption{Modello MDC (funzione di hash iterativa)}
+  \label{fig:etichetta}
+\end{figure}
+
+\subsection{Proprietà di Sicurezza (MDC)}
+Una funzione di hash crittografica (MDC) deve avere le seguenti proprietà:
+\begin{itemize}
+    \item \textbf{Efficienza:} Deve essere semplice calcolare $d=h(m)$.
+    \item \textbf{Preimage Resistance (Non invertibilità):} Dato $d$, deve essere computazionalmente difficile risalire a $m$ tale che $h(m)=d$.
+    \item \textbf{2nd Preimage Resistance (Weak Collision Resistance):} Dato $x$, deve essere computazionalmente difficile trovare un $y \neq x$ tale che $h(y) = h(x)$.
+    \item \textbf{Strong Collision Resistance:} Deve essere computazionalmente difficile trovare \emph{qualsiasi} coppia di messaggi distinti $(x, y)$ tali che $h(x) = h(y)$.
+    \item \textbf{Paradosso del Compleanno (Birthday Problem):} A causa del paradosso del compleanno, la probabilità di trovare una collisione (strong collision) è 0.5 dopo aver calcolato solo $O(2^{n/2})$ hash, dove $n$ è la dimensione dell'hash.
+    \item Un MDC è sicuro se trovare collisioni richiede un lavoro $O(2^{n/2})$ e la preimage resistance è garantita.
+\end{itemize}
+
+\subsection{Algoritmi Notevoli (MDC e MAC)}
+\begin{itemize}
+    \item \textbf{MD5 (Message Digest 5):}
+          \begin{itemize}
+              \item Introdotto nel 1991, produce un hash $n=128$ bit.
+              \item È molto veloce.
+              \item \textbf{È considerato insicuro:} Dal 1996 è stata dimostrata una crescente insicurezza. Nel 2005 è stato dimostrato che bastano 8 ore per trovare due messaggi che collidono (violazione della \emph{strong collision resistance}).
+          \end{itemize}
+    \item \textbf{SHA-1 (Secure Hashing Algorithm 1):}
+          \begin{itemize}
+              \item Introdotto nel 1993, produce un hash $n=160$ bit.
+              \item Produce un digest più lungo di MD5 (160 vs 128) per resistere meglio al birthday attack.
+              \item \textbf{È considerato insicuro:} Nel 2005 è stata mostrata la sua insicurezza teorica (trovare collisioni richiede $O(2^{69})$ operazioni invece del $O(2^{80})$ ottimale).
+          \end{itemize}
+    \item \textbf{HMAC (Hash-based MAC):}
+          \begin{itemize}
+              \item È un metodo standard per costruire un MAC sicuro a partire da un qualsiasi MDC (es. HMAC-SHA1).
+              \item La formula è: $MAC_k(m) = MDC((k \oplus c_1) | MDC((k \oplus c_2) | m))$ (dove $k$ è paddato e $c_1, c_2$ sono costanti).
+              \item \textbf{Vantaggio:} È un meccanismo la cui sicurezza è dimostrata. L'applicazione di HMAC "risolve" i problemi di bassa collision-resistance degli MDC sottostanti (come MD5). Per questo, \textbf{usate HMAC}.
+          \end{itemize}
+\end{itemize}
+
+\end{document}
