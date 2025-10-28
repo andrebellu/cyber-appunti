@@ -1,7 +1,7 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
- \section{Crittografia Asimmetrica}
+\section{Crittografia Asimmetrica}
 \label{sec:crittografia-asimmetrica}
 
 \subsection{Schema e Concetti Fondamentali}
@@ -21,10 +21,10 @@ Lo schema generico per la \textbf{confidenzialità} è il seguente:
 \end{enumerate}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{asymm-gen.png}
-  \caption{Schema generico crittografia asimmetrica}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{asymm-gen.png}
+    \caption{Schema generico crittografia asimmetrica}
+    \label{fig:}
 \end{figure}
 
 La proprietà fondamentale è che, data la chiave pubblica $k_1$, deve essere computazionalmente impossibile (molto difficile) ricavare la corrispondente chiave privata $k_2$.
@@ -45,19 +45,42 @@ Questi meccanismi basano la loro sicurezza sulla difficoltà (ad oggi) nel risol
 \end{itemize}
 La sicurezza non è provata in assoluto, ma si basa sul fatto che i problemi matematici sottostanti sono studiati da secoli e ancora non si conoscono algoritmi efficienti per risolverli (es. in tempo polinomiale).
 
-\subsection{Richiami: Teorema di Eulero}
-L'algoritmo RSA si basa su concetti di aritmetica modulare, in particolare sul Teorema di Eulero.
+\subsection{Richiami: Teorema di Eulero e Fondamenti di RSA}
+
+RSA si basa su proprietà dell'aritmetica modulare.
+Dato un intero positivo $n$, definiamo:
+
 \begin{itemize}
-    \item Si definisce $Z_n$ come l'insieme dei numeri modulo $n$ (i resti della divisione per $n$).
-    \item Si definisce $Z_n^*$ come il sottoinsieme di $Z_n$ che contiene i numeri primi relativi a $n$ (cioè $mcd(x,n)=1$).
-    \item La \textbf{Funzione $\phi(n)$ di Eulero} conta quanti numeri ci sono in $Z_n^*$ (la sua cardinalità: $\phi(n) = |Z_n^*|$).
-    \item Se $n$ è un numero primo, $\phi(n) = n-1$.
-    \item Se $n = p \cdot q$, con $p$ e $q$ primi distinti, allora $\phi(n) = (p-1)(q-1)$.
-    \item \textbf{Corollario del Teorema di Eulero (base di RSA):} Dati $p, q$ primi, $n=pq$, per ogni $m \in Z_n$ e $k \ge 0$ vale:
-    $$ m^{k \cdot \phi(n) + 1} = m \mod n $$
+    \item $Z_n = \{0,1,2,\dots,n-1\}$, l’insieme dei resti mod $n$;
+    \item $Z_n^* = \{x \in Z_n \, | \, \gcd(x,n)=1\}$, cioè i numeri “primi relativi” con $n$;
+    \item la \textbf{funzione di Eulero} $\phi(n) = |Z_n^*|$, cioè la quantità di numeri minori di $n$ e coprimi con esso.
 \end{itemize}
-Questo corollario ci dice che se troviamo due numeri $e$ e $d$ tali che $e \cdot d = 1 \mod \phi(n)$ (cioè $e \cdot d = k \cdot \phi(n) + 1$ per qualche $k$), allora l'operazione di "elevamento a $e$" è l'inversa dell'operazione di "elevamento a $d$".
-Infatti: $(m^e)^d \mod n = m^{ed} \mod n = m^{k \cdot \phi(n) + 1} \mod n = m \mod n$.
+
+Alcuni casi notevoli:
+\[
+    \phi(p) = p-1 \quad \text{se } p \text{ è primo,} \qquad
+    \phi(pq) = (p-1)(q-1) \quad \text{se } p,q \text{ primi distinti.}
+\]
+
+\paragraph{Teorema di Eulero}
+Per ogni $m \in Z_n^*$ vale:
+\[
+    m^{\phi(n)} \equiv 1 \pmod{n}
+\]
+Da cui segue il \textbf{corollario fondamentale} di RSA:
+\[
+    m^{k\phi(n)+1} \equiv m \pmod{n}, \quad \forall k \in \mathbb{N}.
+\]
+
+Se scegliamo due numeri $e$ e $d$ tali che
+\[
+    e \cdot d \equiv 1 \pmod{\phi(n)} \quad \Rightarrow \quad e \cdot d = k\phi(n) + 1,
+\]
+allora l’elevamento a potenza con $e$ e con $d$ sono operazioni inverse modulo $n$:
+\[
+    (m^e)^d \equiv m^{ed} \equiv m^{k\phi(n)+1} \equiv m \pmod{n}.
+\]
+Questa è la base matematica che rende possibile RSA.
 
 \section{Algoritmo RSA (Rivest, Shamir, Adleman)}
 RSA (1977) è il primo e più noto meccanismo asimmetrico "tuttofare", utilizzabile per tutti e tre gli obiettivi (confidenzialità, firme, scambio chiavi). Basa la sua sicurezza sulla difficoltà di fattorizzare $n$.
@@ -90,26 +113,34 @@ Come nello schema generale: Bob cifra $m$ per Alice usando la $K_{pub}$ di Alice
 L'operazione funziona per il teorema di Eulero, purché $m < n$.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{RSAconf.png}
-  \caption{Schema RSA per Confidenzialità}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{RSAconf.png}
+    \caption{Schema RSA per Confidenzialità}
+    \label{fig:}
 \end{figure}
 
 \subsubsection{2. Firme Digitali}
-Per firmare, Alice usa la sua \textbf{chiave privata} (per dimostrare di essere lei). Bob verifica la firma usando la \textbf{chiave pubblica} di Alice.
-\begin{itemize}
-    \item \textbf{Firma (Alice):} $f = m^d \mod n$ (dove $m$ è il messaggio o, più realisticamente, l'hash del messaggio).
+Nelle firme RSA il mittente dimostra la proprietà della chiave privata:
+
+\begin{enumerate}
+    \item Alice calcola il digest del messaggio: $h = H(m)$.
+    \item Alice firma il digest: $f = h^d \mod n$.
     \item Alice invia a Bob la coppia $\{m, f\}$.
-    \item \textbf{Verifica (Bob):} Bob calcola $m' = f^e \mod n$. Se $m' = m$, la firma è valida.
+    \item Bob verifica la firma calcolando $h' = f^e \mod n$ e confrontando $h'$ con $H(m)$.
+\end{enumerate}
+
+Se coincidono, Bob sa che:
+\begin{itemize}
+    \item il messaggio non è stato modificato (integrità);
+    \item il mittente è realmente Alice (autenticità);
+    \item Alice non può negare di averlo inviato (non ripudio).
 \end{itemize}
-Questo garantisce non ripudio: solo Alice (che possiede $d$) può aver generato $f$.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{RSAfirme.png}
-  \caption{Schema RSA per Firme Digiali}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{RSAfirme.png}
+    \caption{Schema RSA per Firme Digiali}
+    \label{fig:}
 \end{figure}
 \subsubsection{3. Instaurazione di Chiavi Effimere}
 Poiché RSA è computazionalmente lento, non si usa per cifrare messaggi lunghi. Si usa invece un approccio ibrido:
@@ -122,10 +153,10 @@ Poiché RSA è computazionalmente lento, non si usa per cifrare messaggi lunghi.
 \end{enumerate}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{RSAkey.png}
-  \caption{Schema RSA per Scambio Chiavi}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{RSAkey.png}
+    \caption{Schema RSA per Scambio Chiavi}
+    \label{fig:}
 \end{figure}
 
 \subsection{Sicurezza e Uso Pratico di RSA}
@@ -134,6 +165,21 @@ Poiché RSA è computazionalmente lento, non si usa per cifrare messaggi lunghi.
     \item \textbf{Lunghezza Chiave:} La sicurezza dipende dalla grandezza di $n$. Oggi, chiavi $n$ più corte di 1024 o 2048 bit non sono considerate sicure.
     \item \textbf{Efficienza:} La generazione delle chiavi è lenta. La cifratura (con $e$ piccolo) è veloce, la decifratura (con $d$ grande) è lenta.
 \end{itemize}
+
+\subsection{Tabella riassuntiva}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l|l|l}
+        \textbf{Obiettivo} & \textbf{Chiave usata} & \textbf{Operazione}                \\
+        \hline
+        Confidenzialità    & Pubblica ($e$)        & $c = m^e \bmod n$                  \\
+        Decifratura        & Privata ($d$)         & $m = c^d \bmod n$                  \\
+        Firma              & Privata ($d$)         & $f = H(m)^d \bmod n$               \\
+        Verifica firma     & Pubblica ($e$)        & $H(m) \stackrel{?}{=} f^e \bmod n$ \\
+    \end{tabular}
+    \caption{Riassunto delle operazioni RSA}
+\end{table}
+
 
 \section{Protocollo Diffie-Hellman (DH)}
 DH (1976) è stato il primo meccanismo asimmetrico pubblicato. Il suo unico obiettivo è lo \textbf{scambio sicuro di una chiave effimera} $K$.
@@ -152,10 +198,10 @@ Basa la sua sicurezza sulla difficoltà del \textbf{problema del logaritmo discr
 Alice e Bob hanno ottenuto la stessa chiave segreta $K$ senza mai trasmetterla. Un attaccante (Trudy) che osserva $p, g, T_a, T_b$ non può calcolare $K$ perché non conosce $Sa$ o $Sb$, e non può ricavarli a causa della difficoltà del logaritmo discreto.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{DiffieHellman.png}
-  \caption{Schema protocollo Diffie Hellman}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{DiffieHellman.png}
+    \caption{Schema protocollo Diffie Hellman}
+    \label{fig:}
 \end{figure}
 \subsection{Sicurezza di DH}
 \begin{itemize}
@@ -187,10 +233,10 @@ Un certificato X.509 è un documento digitale che lega un'identità a una chiave
 \end{itemize}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{X509.png}
-  \caption{Schema campi certificato X.509}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{X509.png}
+    \caption{Schema campi certificato X.509}
+    \label{fig:}
 \end{figure}
 
 \subsection{Processo di Verifica del Certificato}
@@ -205,10 +251,10 @@ Un certificato X.509 è un documento digitale che lega un'identità a una chiave
 \end{enumerate}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{cert.png}
-  \caption{Schema verifica certficato}
-  \label{fig:}
+    \centering
+    \includegraphics[width=0.8\textwidth]{cert.png}
+    \caption{Schema verifica certficato}
+    \label{fig:}
 \end{figure}
 
 \subsection{Catene di Certificati e Revoca}
@@ -217,6 +263,6 @@ Un certificato X.509 è un documento digitale che lega un'identità a una chiave
     \item \textbf{Intermediate CA:} Per ragioni di sicurezza, le Root CA non firmano direttamente i certificati degli utenti finali. Firmano i certificati di "CA Intermedie" ($CA_1$), che a loro volta firmano i certificati degli utenti (Alice).
     \item \textbf{Catena (Chain of Trust):} Alice invia a Bob sia il suo certificato (firmato da $CA_1$) sia il certificato di $CA_1$ (firmato dalla $CA_{root}$). Bob verifica prima $CA_1$ usando la $CA_{root}$, e poi verifica Alice usando $CA_1$.
     \item \textbf{Revoca (CRL):} Se una chiave privata viene compromessa, il certificato corrispondente deve essere revocato prima della sua data di scadenza. Le CA pubblicano periodicamente una \textbf{Certificate Revocation List (CRL)}, una lista firmata dei numeri seriali dei certificati revocati. Prima di fidarsi di un certificato, Bob dovrebbe anche controllare che non sia presente nell'ultima CRL della CA.
-\end{itemize} 
+\end{itemize}
 \end{document}
 
